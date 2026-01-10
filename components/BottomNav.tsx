@@ -1,5 +1,12 @@
 "use client";
+import React from "react";
 import { Home, Briefcase, Mail, User } from "lucide-react";
+
+interface NavItemProps {
+  icon: React.ReactNode;
+  label: string;
+  active?: boolean;
+}
 
 export default function BottomNav() {
   const phoneNumber = "918368436412";
@@ -20,7 +27,7 @@ export default function BottomNav() {
         <div className="relative -top-5 flex flex-col items-center group">
           <button 
             onClick={openWhatsApp}
-            className="bg-[#25D366] hover:bg-[#20ba5a] text-white p-3.5 rounded-full shadow-[0_4_15px_rgba(37,211,102,0.4)] border-[5px] border-white transition-transform active:scale-90"
+            className="bg-[#25D366] hover:bg-[#20ba5a] text-white p-3.5 rounded-full shadow-[0_4px_15px_rgba(37,211,102,0.4)] border-[5px] border-white transition-transform active:scale-90"
             aria-label="Chat on WhatsApp"
           >
             <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor">
@@ -41,7 +48,7 @@ export default function BottomNav() {
   );
 }
 
-function NavItem({ icon, label, active = false }) {
+function NavItem({ icon, label, active = false }: NavItemProps) {
   return (
     <div className="flex flex-col items-center justify-center min-w-[60px] cursor-pointer transition-all active:scale-95 group">
       <div className={`transition-colors ${active ? "text-[#0073c1]" : "text-gray-400 group-hover:text-[#0073c1]"}`}>
