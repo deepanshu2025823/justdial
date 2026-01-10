@@ -1,9 +1,15 @@
 "use client";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { 
   Search, MapPin, Mic, ChevronRight, ChevronLeft, 
   Home as HomeIcon, Briefcase, MessageCircle, Mail, User 
 } from "lucide-react";
+
+// interface for TypeScript to recognize SpeechRecognition on window object
+interface IWindow extends Window {
+  SpeechRecognition?: any;
+  webkitSpeechRecognition?: any;
+}
 
 export default function SearchHero() {
   const words = ["Products & Services", "B2B Suppliers", "Real Estate Agents", "Doctors"];
@@ -26,21 +32,30 @@ export default function SearchHero() {
   useEffect(() => {
     const timer = setInterval(() => setIndex((prev) => (prev + 1) % words.length), 3000);
     return () => clearInterval(timer);
-  }, []);
+  }, [words.length]);
 
   const handleMic = () => {
-    const SpeechRecognition = window.SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (!SpeechRecognition) return alert("Browser support not found");
-    const recognition = new SpeechRecognition();
-    recognition.onstart = () => setIsListening(true);
-    recognition.onend = () => setIsListening(false);
-    recognition.start();
+    if (typeof window !== "undefined") {
+      const MyWindow = window as unknown as IWindow;
+      const SpeechRecognition = MyWindow.SpeechRecognition || MyWindow.webkitSpeechRecognition;
+      
+      if (!SpeechRecognition) {
+        alert("Browser support not found");
+        return;
+      }
+
+      const recognition = new SpeechRecognition();
+      recognition.onstart = () => setIsListening(true);
+      recognition.onend = () => setIsListening(false);
+      recognition.start();
+    }
   };
 
   return (
     <section className="relative w-full bg-white pb-20 md:pb-10 font-sans">
       <div className="max-w-[1300px] mx-auto px-4 pt-6">
         
+        {/* Dynamic Heading */}
         <div className="h-15 flex items-center mb-4 overflow-hidden">
           <h1 className="text-xl md:text-[26px] text-gray-800">
             Search across <span className="font-bold text-black">‘5.9 Crore+’</span>{" "}
@@ -50,13 +65,14 @@ export default function SearchHero() {
           </h1>
         </div>
 
+        {/* Search Bar Container */}
         <div className="flex flex-col md:flex-row border border-gray-200 rounded-xl overflow-hidden mb-6 shadow-sm">
           <div className="flex items-center px-4 py-3 bg-white border-b md:border-b-0 md:border-r md:w-1/3">
             <MapPin size={18} className="text-gray-400 mr-2 shrink-0" />
-            <input className="outline-none w-full text-sm" placeholder="Shiv Colony-Faridabad Sect" />
+            <input className="outline-none w-full text-sm text-gray-700" placeholder="Shiv Colony-Faridabad Sect" />
           </div>
           <div className="flex items-center px-4 py-3 bg-white flex-1">
-            <input className="outline-none w-full text-sm" placeholder={`Search for ${words[index]}...`} />
+            <input className="outline-none w-full text-sm text-gray-700" placeholder={`Search for ${words[index]}...`} />
             <div className="flex items-center gap-4">
               <Mic 
                 onClick={handleMic}
@@ -70,11 +86,13 @@ export default function SearchHero() {
           </div>
         </div>
 
+        {/* Content Grid: Banners and Categories */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 h-auto lg:h-[280px]">
+          {/* Banner Slider */}
           <div className="lg:col-span-5 relative rounded-2xl overflow-hidden group border border-gray-100 h-[200px] lg:h-full">
             <div className="flex h-full transition-transform duration-500 ease-in-out" style={{ transform: `translateX(-${currentSlide * 100}%)` }}>
               {banners.map((src, i) => (
-                <img key={i} src={src} className="w-full h-full object-fill shrink-0" alt="Banner" />
+                <img key={i} src={src} className="w-full h-full object-fill shrink-0" alt="Special Offers" />
               ))}
             </div>
             
@@ -92,6 +110,7 @@ export default function SearchHero() {
             </div>
           </div>
 
+          {/* Categories Grid */}
           <div className="lg:col-span-7 grid grid-cols-2 md:grid-cols-4 gap-3 h-full">
             {categories.map((cat, i) => (
               <div key={i} className={`${cat.color} relative rounded-2xl p-4 text-white overflow-hidden group cursor-pointer h-[150px] lg:h-full transition-transform active:scale-95 shadow-sm`}>
@@ -113,30 +132,31 @@ export default function SearchHero() {
         </div>
       </div>
 
+      {/* Mobile Bottom Navigation */}
       <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 p-2 flex justify-around items-center z-[60] md:hidden shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
-        <div className="flex flex-col items-center text-[#0073c1]">
-          <HomeIcon size={22} />
-          <span className="text-[10px] font-bold">Home</span>
-        </div>
-        <div className="flex flex-col items-center text-gray-500">
-          <Briefcase size={22} />
-          <span className="text-[10px]">B2B</span>
-        </div>
+        <NavItem icon={<HomeIcon size={22} />} label="Home" active />
+        <NavItem icon={<Briefcase size={22} />} label="B2B" />
+        
+        {/* Floating Chat Button */}
         <div className="relative -top-5">
           <div className="bg-[#25d366] p-3 rounded-full shadow-lg border-4 border-white active:scale-90 transition-transform">
             <MessageCircle size={26} className="text-white" />
           </div>
           <span className="absolute -bottom-5 left-1/2 -translate-x-1/2 text-[10px] text-gray-500 font-medium">Chat</span>
         </div>
-        <div className="flex flex-col items-center text-gray-500">
-          <Mail size={22} />
-          <span className="text-[10px]">Leads</span>
-        </div>
-        <div className="flex flex-col items-center text-gray-500">
-          <User size={22} />
-          <span className="text-[10px]">Account</span>
-        </div>
+
+        <NavItem icon={<Mail size={22} />} label="Leads" />
+        <NavItem icon={<User size={22} />} label="Account" />
       </nav>
     </section>
+  );
+}
+
+function NavItem({ icon, label, active = false }: { icon: React.ReactNode, label: string, active?: boolean }) {
+  return (
+    <div className={`flex flex-col items-center ${active ? "text-[#0073c1]" : "text-gray-500"}`}>
+      {icon}
+      <span className={`text-[10px] ${active ? "font-bold" : "font-medium"}`}>{label}</span>
+    </div>
   );
 }
