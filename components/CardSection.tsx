@@ -1,7 +1,33 @@
 "use client";
+import React from "react";
 import Image from "next/image";
 
-const sections = [
+// TypeScript Interfaces to fix Vercel Build Errors
+interface SectionItem {
+  name: string;
+  img: string;
+}
+
+interface Section {
+  title: string;
+  items: SectionItem[];
+}
+
+interface BookingItem {
+  name: string;
+  img: string;
+  note?: string;      // Optional property
+  noteColor?: string; // Optional property
+}
+
+interface BookingSection {
+  title: string;
+  sub: string;
+  icon?: string;      // Optional property
+  items: BookingItem[];
+}
+
+const sections: Section[] = [
   {
     title: "Wedding Requisites",
     items: [
@@ -36,7 +62,7 @@ const sections = [
   }
 ];
 
-const bookingSections = [
+const bookingSections: BookingSection[] = [
   {
     title: "Bills & Recharge",
     sub: "Pay your bills & recharge instantly with Justdial",
@@ -114,10 +140,14 @@ export default function CardSection() {
                 {section.items.map((item, i) => (
                   <div key={i} className="flex flex-col items-center group cursor-pointer">
                     <div className="w-[72px] h-[72px] flex items-center justify-center border border-gray-100 rounded-2xl mb-3 shadow-sm group-hover:shadow-md transition-all group-hover:-translate-y-1 bg-white">
-                      <img src={item.img} alt={item.name} className="w-20 h-20 object-contain" />
+                      <img src={item.img} alt={item.name} className="w-12 h-12 object-contain" />
                     </div>
-                    <span className="text-[13px] font-bold text-gray-800 mb-1">{item.name}</span>
-                    {item.note && <span className={`${item.noteColor} text-[10px] font-medium text-center leading-tight`}>{item.note}</span>}
+                    <span className="text-[13px] font-bold text-gray-800 mb-1 text-center">{item.name}</span>
+                    {item.note && (
+                      <span className={`${item.noteColor || 'text-gray-500'} text-[10px] font-medium text-center leading-tight`}>
+                        {item.note}
+                      </span>
+                    )}
                   </div>
                 ))}
               </div>
