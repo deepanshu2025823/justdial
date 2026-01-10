@@ -1,7 +1,19 @@
 "use client";
+import React from "react";
 import { Facebook, Youtube, Instagram, Linkedin, Twitter } from "lucide-react";
 
-const quickLinks = [
+// TypeScript Interfaces to fix Vercel Build Errors
+interface QuickLink {
+  name: string;
+  col: number;
+}
+
+interface SocialIconProps {
+  icon: React.ReactNode;
+  bg: string;
+}
+
+const quickLinks: QuickLink[] = [
   { name: "About us", col: 1 }, { name: "Advertise", col: 2 },
   { name: "Investor Relations", col: 1 }, { name: "Media", col: 2 },
   { name: "We're hiring", col: 1 }, { name: "Testimonials", col: 2 },
@@ -13,7 +25,7 @@ const quickLinks = [
   { name: "Sitemap", col: 1 }, { name: "Return & Exchange Policy", col: 2 },
 ];
 
-const jdVerticals = [
+const jdVerticals: string[][] = [
   ["B2B", "All India", "Doctors", "Bills & Recharge", "Cricket", "Guides"],
   ["Accommodation", "Advertising & Pr", "Agriculture", "Apparel", "Astrology", "Automobiles & Two Wheelers"],
   ["Beauty & Personal Care", "Business & Legal", "Chemicals", "Construction & Real Estate", "Education", "Electronic Component"],
@@ -26,7 +38,7 @@ const jdVerticals = [
 
 export default function Footer() {
   return (
-    <footer className="bg-white border-t border-gray-100 pt-12 pb-6">
+    <footer className="bg-white border-t border-gray-100 pt-12 pb-24 md:pb-6">
       <div className="max-w-[1300px] mx-auto px-4">
         
         {/* Social & App Links Section */}
@@ -44,7 +56,7 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* App Store Buttons - FIXED URLS */}
+          {/* App Store Buttons */}
           <div className="flex gap-3">
             <img 
               src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" 
@@ -94,7 +106,7 @@ export default function Footer() {
   );
 }
 
-function SocialIcon({ icon, bg }) {
+function SocialIcon({ icon, bg }: SocialIconProps) {
   return (
     <div className={`${bg} text-white p-2 rounded-full cursor-pointer hover:opacity-80 transition-opacity shadow-sm flex items-center justify-center`}>
       {icon}
