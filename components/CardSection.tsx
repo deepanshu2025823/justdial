@@ -1,8 +1,9 @@
+// components/CardSection.tsx
+
 "use client";
 import React from "react";
 import Image from "next/image";
 
-// TypeScript Interfaces to fix Vercel Build Errors
 interface SectionItem {
   name: string;
   img: string;
@@ -16,14 +17,14 @@ interface Section {
 interface BookingItem {
   name: string;
   img: string;
-  note?: string;      // Optional property
-  noteColor?: string; // Optional property
+  note?: string;      
+  noteColor?: string; 
 }
 
 interface BookingSection {
   title: string;
   sub: string;
-  icon?: string;      // Optional property
+  icon?: string;     
   items: BookingItem[];
 }
 

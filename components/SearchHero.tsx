@@ -1,3 +1,5 @@
+// components/SearchHero.tsx
+
 "use client";
 import React, { useState, useEffect } from "react";
 import { 
@@ -5,7 +7,6 @@ import {
   Home as HomeIcon, Briefcase, MessageCircle, Mail, User 
 } from "lucide-react";
 
-// interface for TypeScript to recognize SpeechRecognition on window object
 interface IWindow extends Window {
   SpeechRecognition?: any;
   webkitSpeechRecognition?: any;
@@ -55,7 +56,6 @@ export default function SearchHero() {
     <section className="relative w-full bg-white pb-20 md:pb-10 font-sans">
       <div className="max-w-[1300px] mx-auto px-4 pt-6">
         
-        {/* Dynamic Heading */}
         <div className="h-15 flex items-center mb-4 overflow-hidden">
           <h1 className="text-xl md:text-[26px] text-gray-800">
             Search across <span className="font-bold text-black">‘5.9 Crore+’</span>{" "}
@@ -65,7 +65,6 @@ export default function SearchHero() {
           </h1>
         </div>
 
-        {/* Search Bar Container */}
         <div className="flex flex-col md:flex-row border border-gray-200 rounded-xl overflow-hidden mb-6 shadow-sm">
           <div className="flex items-center px-4 py-3 bg-white border-b md:border-b-0 md:border-r md:w-1/3">
             <MapPin size={18} className="text-gray-400 mr-2 shrink-0" />
@@ -86,9 +85,7 @@ export default function SearchHero() {
           </div>
         </div>
 
-        {/* Content Grid: Banners and Categories */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 h-auto lg:h-[280px]">
-          {/* Banner Slider */}
           <div className="lg:col-span-5 relative rounded-2xl overflow-hidden group border border-gray-100 h-[200px] lg:h-full">
             <div className="flex h-full transition-transform duration-500 ease-in-out" style={{ transform: `translateX(-${currentSlide * 100}%)` }}>
               {banners.map((src, i) => (
@@ -110,7 +107,6 @@ export default function SearchHero() {
             </div>
           </div>
 
-          {/* Categories Grid */}
           <div className="lg:col-span-7 grid grid-cols-2 md:grid-cols-4 gap-3 h-full">
             {categories.map((cat, i) => (
               <div key={i} className={`${cat.color} relative rounded-2xl p-4 text-white overflow-hidden group cursor-pointer h-[150px] lg:h-full transition-transform active:scale-95 shadow-sm`}>
@@ -132,12 +128,10 @@ export default function SearchHero() {
         </div>
       </div>
 
-      {/* Mobile Bottom Navigation */}
       <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 p-2 flex justify-around items-center z-[60] md:hidden shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
         <NavItem icon={<HomeIcon size={22} />} label="Home" active />
         <NavItem icon={<Briefcase size={22} />} label="B2B" />
         
-        {/* Floating Chat Button */}
         <div className="relative -top-5">
           <div className="bg-[#25d366] p-3 rounded-full shadow-lg border-4 border-white active:scale-90 transition-transform">
             <MessageCircle size={26} className="text-white" />

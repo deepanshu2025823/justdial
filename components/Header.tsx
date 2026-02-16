@@ -1,3 +1,5 @@
+// components/Header.tsx
+
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
@@ -16,7 +18,6 @@ export default function Header() {
   const langRef = useRef<HTMLDivElement>(null);
   const notifyRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdowns on click outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (langRef.current && !langRef.current.contains(event.target as Node)) setIsLangOpen(false);
@@ -26,7 +27,6 @@ export default function Header() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Prevent background scroll when overlays are open
   useEffect(() => {
     if (isMobileMenuOpen || isSearchOpen) {
       document.body.style.overflow = "hidden";
@@ -39,7 +39,6 @@ export default function Header() {
     <header className="sticky top-0 z-50 w-full border-b bg-white font-sans">
       <div className="mx-auto flex max-w-[1400px] items-center justify-between px-4 h-14 md:h-16">
         
-        {/* --- LOGO SECTION --- */}
         <div className="flex items-center shrink-0">
           <Image
             src="https://akam.cdn.jdmagicbox.com/images/icontent/jdrwd/jdlogosvg.svg"
@@ -51,10 +50,8 @@ export default function Header() {
           />
         </div>
 
-        {/* --- RIGHT SECTION (Search, Nav, Bell, Login) --- */}
         <div className="flex items-center gap-2 md:gap-4 lg:gap-6">
           
-          {/* 1. Search Icon */}
           <div 
             className="p-2 cursor-pointer text-slate-600 hover:bg-gray-100 rounded-full transition" 
             onClick={() => setIsSearchOpen(true)}
@@ -62,7 +59,6 @@ export default function Header() {
             <Search size={22} />
           </div>
 
-          {/* 2. Desktop Navigation */}
           <nav className="hidden xl:flex items-center gap-6 text-[14px] text-gray-700 font-normal">
             <div className="relative" ref={langRef}>
               <div onClick={() => setIsLangOpen(!isLangOpen)} className="flex items-center gap-1 cursor-pointer text-blue-600 font-medium hover:bg-blue-50 px-2 py-1 rounded transition">
@@ -95,7 +91,6 @@ export default function Header() {
             </div>
           </nav>
 
-          {/* 3. Bell Icon (Desktop & Mobile) */}
           <div className="relative" ref={notifyRef}>
             <div 
               className="p-2 cursor-pointer text-slate-600 hover:bg-gray-100 rounded-full transition" 
@@ -116,19 +111,16 @@ export default function Header() {
             )}
           </div>
 
-          {/* 4. Login Button (Desktop) */}
           <button className="hidden sm:block bg-[#0073c1] text-white px-5 py-2 rounded-md text-sm font-semibold hover:bg-blue-700 transition active:scale-95 whitespace-nowrap">
             Login / Sign Up
           </button>
 
-          {/* 5. Mobile Menu Toggle */}
           <div className="xl:hidden p-1 cursor-pointer hover:bg-gray-100 rounded-lg" onClick={() => setIsMobileMenuOpen(true)}>
             <Menu size={28} className="text-slate-600" />
           </div>
         </div>
       </div>
 
-      {/* --- FULL-SCREEN SEARCH POPUP --- */}
       {isSearchOpen && (
         <div className="fixed inset-0 z-[200] bg-white animate-in slide-in-from-bottom duration-300 flex flex-col">
           <div className="p-4 border-b flex items-center gap-3 max-w-[1400px] mx-auto w-full">
@@ -157,7 +149,6 @@ export default function Header() {
         </div>
       )}
 
-      {/* --- MOBILE SIDE MENU (CORRECTED) --- */}
       <div className={`fixed inset-0 z-[160] xl:hidden transition-all ${isMobileMenuOpen ? "visible" : "invisible"}`}>
         <div className={`absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity ${isMobileMenuOpen ? "opacity-100" : "opacity-0"}`} onClick={() => setIsMobileMenuOpen(false)} />
         <div className={`absolute right-0 top-0 h-full w-[85%] max-w-sm bg-white shadow-2xl transition-transform duration-300 flex flex-col ${isMobileMenuOpen ? "translate-x-0" : "translate-x-full"}`}>
@@ -197,12 +188,11 @@ export default function Header() {
             </div>
           </div>
 
-          {/* FIXED FOOTER IN SIDE MENU (LOGIN BUTTON) */}
           <div className="p-4 border-t bg-gray-50 shrink-0">
             <button className="bg-[#0073c1] text-white w-full py-4 rounded-xl font-bold shadow-lg active:scale-95 transition-transform text-base">
               Login / Sign Up
             </button>
-            <div className="h-4"></div> {/* Bottom spacing for mobile navigation bar */}
+            <div className="h-4"></div> 
           </div>
         </div>
       </div>

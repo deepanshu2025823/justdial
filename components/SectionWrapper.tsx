@@ -1,3 +1,5 @@
+// components/SectionWrapper.tsx
+
 export default function SectionWrapper({
   title,
   children,

@@ -1,8 +1,9 @@
+// components/Footer.tsx
+
 "use client";
 import React from "react";
 import { Facebook, Youtube, Instagram, Linkedin, Twitter } from "lucide-react";
 
-// TypeScript Interfaces to fix Vercel Build Errors
 interface QuickLink {
   name: string;
   col: number;
@@ -41,10 +42,8 @@ export default function Footer() {
     <footer className="bg-white border-t border-gray-100 pt-12 pb-24 md:pb-6">
       <div className="max-w-[1300px] mx-auto px-4">
         
-        {/* Social & App Links Section */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-12">
           
-          {/* Social Icons */}
           <div className="flex items-center gap-4">
             <span className="text-[18px] font-bold text-gray-800">Follow us on</span>
             <div className="flex gap-2">
@@ -56,7 +55,6 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* App Store Buttons */}
           <div className="flex gap-3">
             <img 
               src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" 
@@ -73,10 +71,8 @@ export default function Footer() {
 
         <hr className="border-gray-100 mb-10" />
 
-        {/* Links Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
           
-          {/* Quick Links */}
           <div className="lg:col-span-3">
             <h3 className="text-[16px] font-bold text-gray-900 mb-6 uppercase tracking-wider">Quick Links</h3>
             <div className="grid grid-cols-2 gap-x-4 gap-y-3">
@@ -86,7 +82,6 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* JD Verticals */}
           <div className="lg:col-span-9">
             <h3 className="text-[16px] font-bold text-gray-900 mb-6 uppercase tracking-wider">JD Verticals</h3>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-x-4 gap-y-3">
@@ -97,7 +92,6 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Bottom Bar: Copyright Only */}
         <div className="mt-16 pt-8 border-t border-gray-50 flex justify-center md:justify-start items-center text-[12px] text-gray-400 font-medium">
           <span>Copyrights 2008-26 . JustDial . All Rights Reserved.</span>
         </div>

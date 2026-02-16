@@ -1,3 +1,5 @@
+// components/TopCategories.tsx
+
 "use client";
 import Image from "next/image";
 
@@ -33,7 +35,6 @@ export default function TopCategories() {
             key={i} 
             className="group flex flex-col items-center text-center cursor-pointer transition-transform duration-200 hover:-translate-y-1"
           >
-            {/* Icon Container */}
             <div className={`
               relative w-[68px] h-[68px] mb-3 flex items-center justify-center rounded-2xl border border-gray-100 shadow-sm transition-all
               group-hover:shadow-md group-hover:border-blue-100 
@@ -49,7 +50,6 @@ export default function TopCategories() {
                 `}
               />
               
-              {/* Wedding special banner text placeholder if needed */}
               {cat.isSpecial && (
                 <div className="absolute bottom-0 w-full bg-pink-500 text-[8px] text-white font-bold py-0.5 uppercase">
                   Wedding
@@ -57,7 +57,6 @@ export default function TopCategories() {
               )}
             </div>
 
-            {/* Label */}
             <p className="text-[13px] text-[#222] font-medium leading-tight px-1 max-w-[90px] group-hover:text-blue-600 transition-colors">
               {cat.name}
             </p>

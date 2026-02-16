@@ -2,7 +2,6 @@
 import React from "react";
 import { Home, Briefcase, Mail, User } from "lucide-react";
 
-// --- Types ---
 interface NavItemProps {
   icon: React.ReactNode;
   label: string;
@@ -14,23 +13,18 @@ export default function BottomNav() {
   const message = "Hello! I need some information.";
 
   const openWhatsApp = () => {
-    // Standard URL format for WhatsApp
     const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
     window.open(url, "_blank");
   };
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 shadow-[0_-5px_20px_rgba(0,0,0,0.05)] z-[100] md:hidden">
-      {/* Container height optimized for thumb reach */}
       <div className="flex justify-between items-center h-16 max-w-md mx-auto px-6 relative">
         
-        {/* Home */}
         <NavItem icon={<Home size={22} />} label="Home" active />
 
-        {/* B2B */}
         <NavItem icon={<Briefcase size={22} />} label="B2B" />
 
-        {/* --- CENTER WHATSAPP BUTTON (Floating Style) --- */}
         <div className="relative flex flex-col items-center">
           <div className="absolute -top-12">
             <button 
@@ -46,7 +40,6 @@ export default function BottomNav() {
           <span className="text-[10px] font-bold text-gray-500 mt-6 uppercase tracking-wider">Chat</span>
         </div>
 
-        {/* Leads */}
         <div className="relative">
           <NavItem icon={<Mail size={22} />} label="Leads" />
           <span className="absolute -top-1 right-2 h-4 w-4 bg-red-600 text-[10px] text-white flex items-center justify-center rounded-full border-2 border-white font-bold">
@@ -54,11 +47,9 @@ export default function BottomNav() {
           </span>
         </div>
 
-        {/* Account */}
         <NavItem icon={<User size={22} />} label="Account" />
       </div>
       
-      {/* Bottom SafeArea Spacing for iPhones */}
       <div className="h-1 bg-white"></div>
     </nav>
   );
@@ -73,7 +64,6 @@ function NavItem({ icon, label, active = false }: NavItemProps) {
       <span className={`text-[10px] font-bold uppercase tracking-tighter ${active ? "text-[#0073c1]" : "text-gray-500"}`}>
         {label}
       </span>
-      {/* Active Dot Indicator */}
       {active && <div className="h-1 w-1 bg-[#0073c1] rounded-full mt-0.5"></div>}
     </div>
   );

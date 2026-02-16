@@ -1,0 +1,96 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String    @id @default(cuid())
+  name      String?
+  email     String    @unique
+  phone     String?   @unique
+  password  String    // For Admin login
+  role      String    @default("USER") // "ADMIN" or "USER"
+  createdAt DateTime  @default(now())
+  
+  reviews   Review[]
+  enquiries Enquiry[]
+}
+
+model Category {
+  id         String     @id @default(cuid())
+  name       String     @unique
+  image      String?
+  slug       String     @unique
+  businesses Business[]
+}
+
+model Business {
+  id          String   @id @default(cuid())
+  name        String
+  description String?  @db.Text
+  address     String
+  city        String
+  pincode     String
+  phone       String
+  email       String?
+  website     String?
+  rating      Float    @default(0.0)
+  isVerified  Boolean  @default(false)
+  
+  categoryId  String
+  category    Category @relation(fields: [categoryId], references: [id])
+  
+  images      BusinessImage[]
+  
+  reviews     Review[]
+  enquiries   Enquiry[] 
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model BusinessImage {
+  id         String   @id @default(cuid())
+  url        String
+  
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  createdAt  DateTime @default(now())
+}
+
+model Enquiry {
+  id          String   @id @default(cuid())
+  name        String
+  mobile      String
+  message     String?
+  status      String   @default("PENDING")
+  
+  businessId  String
+  business    Business @relation(fields: [businessId], references: [id])
+  
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id])
+  
+  createdAt   DateTime @default(now())
+}
+
+model Review {
+  id          String   @id @default(cuid())
+  rating      Int
+  comment     String?
+  
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  
+  businessId  String
+  business    Business @relation(fields: [businessId], references: [id])
+  
+  createdAt   DateTime @default(now())
+}

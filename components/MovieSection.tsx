@@ -1,3 +1,5 @@
+// components/MovieSection.tsx
+
 "use client";
 import React, { useRef } from "react";
 import { ChevronRight, ChevronLeft, ThumbsUp } from "lucide-react";
@@ -34,9 +36,7 @@ export default function MovieSection() {
         </button>
       </div>
 
-      {/* Horizontal Scroll Wrapper */}
       <div className="relative group">
-        {/* Navigation Buttons (Desktop Only) */}
         <button 
           onClick={() => scroll("left")}
           className="absolute -left-4 top-[35%] bg-white w-10 h-10 rounded-full shadow-xl border border-gray-100 items-center justify-center z-20 hover:bg-gray-50 transition-all hidden md:flex"
@@ -53,7 +53,6 @@ export default function MovieSection() {
             WebkitOverflowScrolling: 'touch' 
           }}
         >
-          {/* Hide Scrollbar for Chrome/Safari */}
           <style jsx>{`
             div::-webkit-scrollbar { display: none; }
           `}</style>
@@ -63,7 +62,6 @@ export default function MovieSection() {
               key={i} 
               className="min-w-[170px] xs:min-w-[200px] md:min-w-[240px] flex-shrink-0 cursor-pointer snap-start group/card"
             >
-              {/* Poster Container */}
               <div className="relative aspect-[2/3] rounded-xl md:rounded-2xl overflow-hidden mb-3 shadow-md ring-1 ring-black/5">
                 <img 
                   src={movie.img} 
@@ -71,24 +69,20 @@ export default function MovieSection() {
                   className="w-full h-full object-cover transition-transform duration-500 md:group-hover/card:scale-110" 
                 />
                 
-                {/* Overlay (Desktop) */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 md:group-hover/card:opacity-100 transition-opacity" />
 
-                {/* Trending Badge */}
                 {parseInt(movie.rating) >= 90 && (
                   <div className="absolute top-2 left-2 bg-red-600 text-[9px] md:text-[10px] text-white font-bold px-1.5 py-0.5 rounded shadow-md">
                     TRENDING
                   </div>
                 )}
 
-                {/* Rating Badge */}
                 <div className="absolute bottom-2 left-2 bg-black/70 backdrop-blur-sm px-2 py-0.5 rounded flex items-center gap-1 border border-white/10">
                   <ThumbsUp size={12} className="text-green-500 fill-green-500" />
                   <span className="text-[10px] md:text-[12px] font-bold text-white">{movie.rating}</span>
                 </div>
               </div>
 
-              {/* Movie Details */}
               <div className="px-0.5">
                 <h3 className="text-[15px] md:text-lg font-bold text-gray-900 leading-tight mb-1 truncate">
                   {movie.name}
