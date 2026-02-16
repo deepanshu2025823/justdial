@@ -23,41 +23,34 @@ export async function POST(req: Request) {
     const { action, email, password, otp } = body;
 
     if (action === "send-otp") {
-      
-      const user = await db.user.findUnique({
-        where: { email },
-      });
+      const user = await db.user.findUnique({ where: { email } });
 
       if (!user || user.role !== "ADMIN" || user.password !== password) {
-        return new NextResponse("Access Denied: Invalid Credentials or Not an Admin", { status: 401 });
+        return new NextResponse("Access Denied", { status: 401 });
       }
 
       const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
       otpStore.set(email, generatedOtp);
-      console.log(`Generated OTP for ${email}: ${generatedOtp}`);
 
       await transporter.sendMail({
         from: `"JustDial Security" <${process.env.SMTP_USER}>`,
-        to: email, 
+        to: email,
         subject: "Admin Access Verification",
-        html: `
-          <div style="font-family: sans-serif; padding: 20px; text-align: center;">
+        html: `<div style="font-family: sans-serif; padding: 20px; text-align: center;">
             <h2 style="color: #0073c1;">JustDial Admin</h2>
             <p>Use the code below to access your dashboard:</p>
             <h1 style="letter-spacing: 5px; background: #eee; padding: 15px; display: inline-block; border-radius: 8px;">${generatedOtp}</h1>
             <p>Code expires in 5 minutes.</p>
-          </div>
-        `,
+          </div>`,
       });
 
-      return NextResponse.json({ success: true, message: "OTP sent to your email" });
+      return NextResponse.json({ success: true });
     }
 
     if (action === "verify-otp") {
       const storedOtp = otpStore.get(email);
-
       if (!storedOtp || storedOtp !== otp) {
-        return new NextResponse("Invalid or expired OTP", { status: 400 });
+        return new NextResponse("Invalid OTP", { status: 400 });
       }
 
       otpStore.delete(email);
@@ -65,9 +58,10 @@ export async function POST(req: Request) {
       const cookieStore = await cookies();
       cookieStore.set("admin_token", "secure-admin-access-token", {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        maxAge: 60 * 60 * 24, 
+        secure: true,
+        maxAge: 60 * 60 * 24,
         path: "/",
+        sameSite: "lax"
       });
 
       return NextResponse.json({ success: true });
@@ -75,7 +69,6 @@ export async function POST(req: Request) {
 
     return new NextResponse("Invalid action", { status: 400 });
   } catch (error) {
-    console.error("Login Error:", error);
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 }
