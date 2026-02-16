@@ -12,14 +12,19 @@ import {
 } from "lucide-react";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isNotifyOpen, setIsNotifyOpen] = useState(false);
   const [isNavigating, setIsNavigating] = useState(false);
   
-  const pathname = usePathname();
   const profileRef = useRef<HTMLDivElement>(null);
   const notifyRef = useRef<HTMLDivElement>(null);
+
+  if (pathname === "/admin/login") {
+    return <div className="min-h-screen bg-slate-50">{children}</div>;
+  }
 
   useEffect(() => {
     setIsSidebarOpen(false);
@@ -146,9 +151,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
                 className={`flex items-center gap-3 p-1.5 pr-3 rounded-full border transition-all active:scale-95 ${isProfileOpen ? 'bg-blue-50 border-blue-200 ring-4 ring-blue-50' : 'border-transparent hover:bg-slate-50 hover:border-slate-200'}`}
               >
-                <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-[#0073c1] to-blue-400 flex items-center justify-center text-white font-bold shadow-inner">
-                  A
-                </div>
+                <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-[#0073c1] to-blue-400 flex items-center justify-center text-white font-bold shadow-inner">A</div>
                 <div className="hidden md:block text-left">
                   <p className="text-xs font-bold text-slate-800 leading-tight">Super Admin</p>
                   <p className="text-[10px] text-slate-400 font-medium">Deepanshu Joshi</p>
@@ -217,6 +220,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     </div>
   );
 }
+
 
 function NavItem({ href, icon, label, setIsNavigating }: any) {
   const pathname = usePathname();
