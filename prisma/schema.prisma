@@ -94,3 +94,21 @@ model Review {
   
   createdAt   DateTime @default(now())
 }
+
+model SiteSettings {
+  id              String   @id @default("global-config")
+  siteName        String   @default("JustDial Clone")
+  supportEmail    String   @default("admin@justdial.com")
+  maintenanceMode Boolean  @default(false)
+  aiModel         String   @default("Imagen-3-Turbo")
+  updatedAt       DateTime @updatedAt
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  title     String
+  message   String?
+  type      String   @default("INFO") // "LEAD", "USER", "SYSTEM"
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
