@@ -5,8 +5,6 @@ import { cookies } from "next/headers";
 import nodemailer from "nodemailer";
 import { db } from "@/lib/db";
 
-const otpStore = new Map<string, string>();
-
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
   port: Number(process.env.SMTP_PORT),
@@ -23,6 +21,7 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
     const { action, email, password, otp } = body;
+    const cookieStore = await cookies();
 
     if (action === "send-otp") {
       const user = await db.user.findUnique({ where: { email } });
@@ -32,7 +31,13 @@ export async function POST(req: Request) {
       }
 
       const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
-      otpStore.set(email, generatedOtp);
+      
+      cookieStore.set("temp_otp", generatedOtp, { 
+        httpOnly: true, 
+        secure: true, 
+        maxAge: 300, 
+        path: "/" 
+      });
 
       await transporter.sendMail({
         from: `"JustDial Security" <${process.env.SMTP_USER}>`,
@@ -50,14 +55,14 @@ export async function POST(req: Request) {
     }
 
     if (action === "verify-otp") {
-      const storedOtp = otpStore.get(email);
+      const storedOtp = cookieStore.get("temp_otp")?.value;
+
       if (!storedOtp || storedOtp !== otp) {
         return new NextResponse("Invalid OTP", { status: 400 });
       }
 
-      otpStore.delete(email);
+      cookieStore.delete("temp_otp");
 
-      const cookieStore = await cookies();
       cookieStore.set("admin_token", "secure-admin-access-token", {
         httpOnly: true,
         secure: true,
@@ -71,6 +76,7 @@ export async function POST(req: Request) {
 
     return new NextResponse("Invalid action", { status: 400 });
   } catch (error) {
+    console.error("LOGIN_ERROR", error);
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 }
