@@ -4,19 +4,32 @@
 import React, { useState, useEffect } from "react";
 import { 
   Plus, Trash2, Image as ImageIcon, Loader2, Search, 
-  Upload, Edit, X, Save, Sparkles, Wand2 
+  Upload, Edit, X, Save, Sparkles, Wand2, Type, Palette 
 } from "lucide-react";
 
 export default function CategoriesPage() {
   const [categories, setCategories] = useState<any[]>([]);
   const [name, setName] = useState("");
-  const [image, setImage] = useState("");
+  const [description, setDescription] = useState(""); 
+  const [color, setColor] = useState("bg-[#0073c1]"); 
+  const [image, setImage] = useState(""); // Category Icon
+  const [featuredImage, setFeaturedImage] = useState(""); // NEW: Banner/Cover Image
+  
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
   const [generating, setGenerating] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   
   const [editId, setEditId] = useState<string | null>(null);
+
+  const presetColors = [
+    { label: "Blue", value: "bg-[#0073c1]" },
+    { label: "Dark Blue", value: "bg-[#253d82]" },
+    { label: "Purple", value: "bg-[#7b61ff]" },
+    { label: "Green", value: "bg-[#008d48]" },
+    { label: "Orange", value: "bg-[#ff5a00]" },
+    { label: "Red", value: "bg-[#ef4444]" }
+  ];
 
   useEffect(() => {
     fetchCategories();
@@ -63,11 +76,20 @@ export default function CategoriesPage() {
     }
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleIconUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => setImage(reader.result as string);
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleFeaturedUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => setFeaturedImage(reader.result as string);
       reader.readAsDataURL(file);
     }
   };
@@ -83,14 +105,15 @@ export default function CategoriesPage() {
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, image }),
+        body: JSON.stringify({ name, description, color, image, featuredImage }), 
       });
 
       if (res.ok) {
         cancelEdit();
         fetchCategories();
       } else {
-        alert("Operation failed. Possible duplicate name.");
+        const errorText = await res.text();
+        alert(`Operation failed: ${errorText}`);
       }
     } catch (error) {
       alert("Database error.");
@@ -102,14 +125,20 @@ export default function CategoriesPage() {
   const startEdit = (cat: any) => {
     setEditId(cat.id);
     setName(cat.name);
+    setDescription(cat.description || "");
+    setColor(cat.color || "bg-[#0073c1]");
     setImage(cat.image || "");
+    setFeaturedImage(cat.featuredImage || "");
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const cancelEdit = () => {
     setEditId(null);
     setName("");
+    setDescription("");
+    setColor("bg-[#0073c1]");
     setImage("");
+    setFeaturedImage("");
   };
 
   const deleteCategory = async (id: string) => {
@@ -133,8 +162,8 @@ export default function CategoriesPage() {
         <p className="text-slate-500 font-bold uppercase tracking-widest text-xs mt-1">Directory Structure Management</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 px-4">
-        <div className="lg:col-span-1">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 px-4">
+        <div className="xl:col-span-1">
           <div className={`bg-white p-8 rounded-[2.5rem] border transition-all duration-500 shadow-2xl shadow-slate-200/60 sticky top-24 ${editId ? 'border-blue-500 ring-4 ring-blue-50' : 'border-slate-100'}`}>
             <div className="flex justify-between items-center mb-8">
                 <h2 className="text-xl font-black flex items-center gap-2 text-slate-800 uppercase tracking-tighter">
@@ -150,7 +179,7 @@ export default function CategoriesPage() {
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-[2px] ml-1">Label Name</label>
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-[2px] ml-1 flex items-center gap-1.5"><Type size={12}/> Label Name</label>
                 <input
                   type="text"
                   required
@@ -159,6 +188,41 @@ export default function CategoriesPage() {
                   placeholder="e.g. Restaurants"
                   className="w-full mt-2 p-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold focus:bg-white focus:border-[#0073c1] focus:ring-4 focus:ring-blue-50 outline-none transition-all"
                 />
+              </div>
+
+              <div>
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-[2px] ml-1 flex items-center gap-1.5"><Type size={12}/> Subtext / Description</label>
+                <input
+                  type="text"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="e.g. Quick Quotes"
+                  className="w-full mt-2 p-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold focus:bg-white focus:border-[#0073c1] focus:ring-4 focus:ring-blue-50 outline-none transition-all"
+                />
+              </div>
+
+              <div>
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-[2px] ml-1 flex items-center gap-1.5"><Palette size={12}/> Theme Color</label>
+                <div className="flex flex-wrap gap-3 mt-3">
+                  {presetColors.map((c) => (
+                    <button
+                      key={c.value}
+                      type="button"
+                      onClick={() => setColor(c.value)}
+                      className={`w-10 h-10 rounded-xl transition-all ${c.value} ${color === c.value ? 'ring-4 ring-offset-2 ring-slate-300 scale-110' : 'hover:scale-105'}`}
+                      title={c.label}
+                    />
+                  ))}
+                  <div className="flex items-center gap-2 w-full mt-2">
+                     <span className="text-[10px] font-bold text-slate-400 uppercase">Custom Class:</span>
+                     <input 
+                       type="text" 
+                       value={color} 
+                       onChange={(e) => setColor(e.target.value)} 
+                       className="flex-1 bg-slate-50 border border-slate-200 text-xs font-mono p-2 rounded-lg outline-none focus:border-blue-500" 
+                     />
+                  </div>
+                </div>
               </div>
 
               <div>
@@ -175,24 +239,45 @@ export default function CategoriesPage() {
                   </button>
                 </div>
                 
-                <div className={`relative border-2 border-dashed rounded-[2rem] p-8 transition-all group text-center flex flex-col items-center justify-center min-h-[200px] ${image ? 'border-blue-200 bg-blue-50/20' : 'border-slate-200 hover:border-[#0073c1]'}`}>
+                <div className={`relative border-2 border-dashed rounded-[2rem] p-6 transition-all group text-center flex flex-col items-center justify-center min-h-[140px] ${image ? 'border-blue-200 bg-blue-50/20' : 'border-slate-200 hover:border-[#0073c1]'}`}>
                   {generating ? (
                     <div className="animate-pulse flex flex-col items-center">
-                        <Wand2 size={40} className="text-purple-400 animate-bounce" />
+                        <Wand2 size={30} className="text-purple-400 animate-bounce" />
                         <p className="text-[10px] font-black text-purple-500 uppercase mt-4 tracking-widest">AI is painting...</p>
                     </div>
                   ) : image ? (
                     <div className="relative inline-block animate-in zoom-in-95">
-                        <img src={image} className="h-32 w-32 object-cover rounded-[1.5rem] shadow-2xl ring-4 ring-white" alt="preview" />
-                        <button type="button" onClick={() => setImage("")} className="absolute -top-3 -right-3 bg-red-500 text-white p-2 rounded-full shadow-lg hover:bg-red-600 transition-all active:scale-90">
+                        <img src={image} className="h-24 w-24 object-cover rounded-[1.5rem] shadow-lg ring-4 ring-white" alt="preview" />
+                        <button type="button" onClick={() => setImage("")} className="absolute -top-3 -right-3 bg-red-500 text-white p-2 rounded-full shadow-lg hover:bg-red-600 transition-all active:scale-90 z-10">
                             <X size={14} strokeWidth={4} />
                         </button>
                     </div>
                   ) : (
                     <label className="cursor-pointer block w-full py-4">
-                      <Upload className="mx-auto text-slate-300 group-hover:text-[#0073c1] transition-all group-hover:-translate-y-1" size={40} />
-                      <p className="text-[10px] font-black text-slate-400 mt-4 uppercase tracking-widest">Click to upload file</p>
-                      <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
+                      <Upload className="mx-auto text-slate-300 group-hover:text-[#0073c1] transition-all group-hover:-translate-y-1" size={32} />
+                      <p className="text-[10px] font-black text-slate-400 mt-3 uppercase tracking-widest">Upload Icon</p>
+                      <input type="file" accept="image/*" onChange={handleIconUpload} className="hidden" />
+                    </label>
+                  )}
+                </div>
+              </div>
+
+              <div>
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-[2px] ml-1 mb-2 block">Featured Cover Image (Optional)</label>
+                
+                <div className={`relative border-2 border-dashed rounded-[2rem] p-4 transition-all group text-center flex flex-col items-center justify-center min-h-[140px] ${featuredImage ? 'border-emerald-200 bg-emerald-50/20' : 'border-slate-200 hover:border-emerald-500'}`}>
+                  {featuredImage ? (
+                    <div className="relative w-full animate-in zoom-in-95">
+                        <img src={featuredImage} className="w-full h-28 object-cover rounded-xl shadow-md border border-slate-100" alt="featured preview" />
+                        <button type="button" onClick={() => setFeaturedImage("")} className="absolute -top-3 -right-3 bg-red-500 text-white p-2 rounded-full shadow-lg hover:bg-red-600 transition-all active:scale-90 z-10">
+                            <X size={14} strokeWidth={4} />
+                        </button>
+                    </div>
+                  ) : (
+                    <label className="cursor-pointer block w-full py-4">
+                      <Upload className="mx-auto text-slate-300 group-hover:text-emerald-500 transition-all group-hover:-translate-y-1" size={32} />
+                      <p className="text-[10px] font-black text-slate-400 mt-3 uppercase tracking-widest">Upload Cover</p>
+                      <input type="file" accept="image/*" onChange={handleFeaturedUpload} className="hidden" />
                     </label>
                   )}
                 </div>
@@ -210,7 +295,7 @@ export default function CategoriesPage() {
           </div>
         </div>
 
-        <div className="lg:col-span-2">
+        <div className="xl:col-span-2">
           <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-2xl shadow-slate-200/50 overflow-hidden">
             <div className="p-8 border-b border-slate-50 flex justify-between items-center bg-slate-50/30">
                 <div className="relative w-80">
@@ -232,9 +317,9 @@ export default function CategoriesPage() {
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-slate-50/50 text-slate-400 font-black text-[10px] uppercase tracking-[3px]">
-                    <th className="px-10 py-6">Visual Ident</th>
-                    <th className="px-6 py-6">System Slug</th>
-                    <th className="px-10 py-6 text-right">Ops</th>
+                    <th className="px-8 py-6">Identity</th>
+                    <th className="px-6 py-6">Theme & Images</th>
+                    <th className="px-8 py-6 text-right">Ops</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-50">
@@ -242,37 +327,45 @@ export default function CategoriesPage() {
                     <tr><td colSpan={3} className="py-40 text-center"><Loader2 className="animate-spin mx-auto text-[#0073c1]" size={40} /></td></tr>
                   ) : filteredCategories.map((cat) => (
                     <tr key={cat.id} className={`group transition-all ${editId === cat.id ? 'bg-blue-50/50' : 'hover:bg-slate-50/80'}`}>
-                      <td className="px-10 py-6">
-                        <div className="flex items-center gap-6">
-                            <div className="h-16 w-16 rounded-2xl bg-white flex items-center justify-center overflow-hidden border border-slate-100 shadow-lg transition-transform group-hover:scale-110 shrink-0">
+                      <td className="px-8 py-6">
+                        <div className="flex items-center gap-5">
+                            <div className={`h-14 w-14 rounded-2xl flex items-center justify-center overflow-hidden border border-slate-100 shadow-md shrink-0 ${cat.color || 'bg-slate-100'}`}>
                             {cat.image ? (
-                                <img src={cat.image} alt="" className="h-full w-full object-cover" />
+                                <img src={cat.image} alt="" className="h-10 w-10 object-contain mix-blend-multiply" />
                             ) : (
-                                <ImageIcon size={24} className="text-slate-200" />
+                                <ImageIcon size={20} className="text-white/60" />
                             )}
                             </div>
                             <div>
-                              <p className="font-black text-slate-800 text-lg uppercase tracking-tighter leading-none">{cat.name}</p>
-                              <p className="text-[9px] text-slate-400 font-bold uppercase mt-1 tracking-widest">Ref: {cat.id.slice(-6)}</p>
+                              <p className="font-black text-slate-800 text-sm uppercase tracking-tight">{cat.name}</p>
+                              <p className="text-[9px] text-slate-500 font-bold mt-0.5">{cat.description || "No Subtext"}</p>
                             </div>
                         </div>
                       </td>
-                      <td className="px-6 py-6">
-                        <span className="text-[11px] font-black text-[#0073c1]/60 bg-blue-50 px-3 py-1.5 rounded-xl border border-blue-100 uppercase tracking-tighter">/{cat.slug}</span>
+                      <td className="px-6 py-6 align-middle">
+                        <div className="flex flex-col gap-2">
+                           <div className="flex items-center gap-2">
+                             <div className={`w-3 h-3 rounded-full ${cat.color || 'bg-slate-200'}`}></div>
+                             <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest font-mono">{cat.color || "None"}</span>
+                           </div>
+                           {cat.featuredImage && (
+                             <span className="text-[8px] bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded border border-emerald-100 w-fit font-black tracking-widest uppercase">Has Cover</span>
+                           )}
+                        </div>
                       </td>
-                      <td className="px-10 py-6 text-right">
+                      <td className="px-8 py-6 text-right align-middle">
                         <div className="flex justify-end gap-3 transition-all">
                             <button 
                                 onClick={() => startEdit(cat)}
                                 className={`p-3 rounded-2xl transition-all shadow-sm border ${editId === cat.id ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-slate-400 hover:text-blue-600 border-slate-100 hover:border-blue-200'}`}
                             >
-                                <Edit size={18} />
+                                <Edit size={16} />
                             </button>
                             <button 
                                 onClick={() => deleteCategory(cat.id)}
                                 className="p-3 bg-white text-slate-400 hover:text-red-600 border border-slate-100 hover:border-red-200 rounded-2xl transition-all shadow-sm"
                             >
-                            <Trash2 size={18} />
+                            <Trash2 size={16} />
                             </button>
                         </div>
                       </td>

@@ -1,5 +1,3 @@
-// prisma/schema.prisma
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,24 +8,49 @@ datasource db {
 }
 
 model User {
-  id        String    @id @default(cuid())
+  id        String   @id @default(cuid())
   name      String?
-  email     String    @unique
-  phone     String?   @unique
-  password  String    // For Admin login
-  role      String    @default("USER") // "ADMIN" or "USER"
-  createdAt DateTime  @default(now())
+  email     String   @unique
+  phone     String?  @unique
+  password  String   // For Admin login
+  role      String   @default("USER") // "ADMIN" or "USER"
+  createdAt DateTime @default(now())
   
   reviews   Review[]
   enquiries Enquiry[]
 }
 
 model Category {
-  id         String     @id @default(cuid())
-  name       String     @unique
-  image      String?
-  slug       String     @unique
-  businesses Business[]
+  id            String     @id @default(cuid())
+  name          String     @unique
+  description   String?    
+  color         String?    
+  image         String?    @db.LongText // Icon Image
+  featuredImage String?    @db.LongText // NEW: Cover/Featured Image
+  slug          String     @unique
+  businesses    Business[]
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @default(now()) @updatedAt 
+}
+
+model Service {
+  id        String   @id @default(cuid())
+  name      String   // e.g., "Mobile", "Electricity", "Flight"
+  image     String   @db.LongText
+  link      String?  // Click karne par kahan jaye
+  section   String   // Grouping ke liye: "BILLS" or "TRAVEL"
+  note      String?  // e.g., "Powered By Easemytrip.com"
+  noteColor String?  // e.g., "text-green-600"
+  createdAt DateTime @default(now())
+}
+
+model Banner {
+  id        String   @id @default(cuid())
+  title     String?  
+  imageUrl  String   @db.LongText 
+  link      String?  
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
 }
 
 model Business {
@@ -47,7 +70,6 @@ model Business {
   category    Category @relation(fields: [categoryId], references: [id])
   
   images      BusinessImage[]
-  
   reviews     Review[]
   enquiries   Enquiry[] 
 
@@ -66,33 +88,33 @@ model BusinessImage {
 }
 
 model Enquiry {
-  id          String   @id @default(cuid())
-  name        String
-  mobile      String
-  message     String?
-  status      String   @default("PENDING")
+  id         String   @id @default(cuid())
+  name       String
+  mobile     String
+  message    String?
+  status     String   @default("PENDING")
   
-  businessId  String
-  business    Business @relation(fields: [businessId], references: [id])
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id])
   
-  userId      String?
-  user        User?    @relation(fields: [userId], references: [id])
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id])
   
-  createdAt   DateTime @default(now())
+  createdAt  DateTime @default(now())
 }
 
 model Review {
-  id          String   @id @default(cuid())
-  rating      Int
-  comment     String?
+  id         String   @id @default(cuid())
+  rating     Int
+  comment    String?
   
-  userId      String
-  user        User     @relation(fields: [userId], references: [id])
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
   
-  businessId  String
-  business    Business @relation(fields: [businessId], references: [id])
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id])
   
-  createdAt   DateTime @default(now())
+  createdAt  DateTime @default(now())
 }
 
 model SiteSettings {

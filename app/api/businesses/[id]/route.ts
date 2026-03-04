@@ -9,12 +9,27 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 
     const business = await db.business.findUnique({
       where: { id },
-      include: { images: true }
+      include: { 
+        images: true,
+        reviews: {
+          orderBy: {
+            createdAt: 'desc'
+          },
+          include: {
+            user: {
+              select: {
+                name: true
+              }
+            }
+          }
+        }
+      }
     });
 
     if (!business) return new NextResponse("Not Found", { status: 404 });
     return NextResponse.json(business);
   } catch (error) {
+    console.error("[BUSINESS_GET_ERROR]", error);
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 }

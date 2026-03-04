@@ -1,15 +1,15 @@
 // app/admin/sidebar.tsx
 
 "use client";
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { 
   LayoutDashboard, Store, Users, MessageSquare, 
   Settings, LogOut, Menu, Search, Bell, Layers, 
-  ChevronDown, User, Shield, CheckCircle, AlertCircle, Clock,
+  ChevronDown, User, Shield, CheckCircle, Clock,
   Activity, Globe, X, Zap, Cpu, Mail, Phone, Lock, Save, Loader2,
-  Inbox, UserPlus
+  Inbox, UserPlus, Image as ImageIcon, Briefcase 
 } from "lucide-react";
 
 export default function AdminLayout({ 
@@ -99,10 +99,6 @@ export default function AdminLayout({
     }
   }, [data]);
 
-  if (pathname === "/admin/login") {
-    return <div className="min-h-screen bg-slate-50 font-sans">{children}</div>;
-  }
-
   useEffect(() => {
     setIsSidebarOpen(false);
     setIsNavigating(false);
@@ -116,6 +112,10 @@ export default function AdminLayout({
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  if (pathname === "/admin/login") {
+    return <div className="min-h-screen bg-slate-50 font-sans">{children}</div>;
+  }
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -197,11 +197,17 @@ export default function AdminLayout({
         <nav className="flex-1 p-5 space-y-1.5 overflow-y-auto custom-scrollbar pt-8">
           <p className="px-4 text-[10px] font-bold text-slate-500 uppercase tracking-[2.5px] mb-5">Command Center</p>
           <NavItem href="/admin/dashboard" icon={<LayoutDashboard size={19} />} label="System Overview" setIsNavigating={setIsNavigating} />
+          
+          <NavItem href="/admin/banners" icon={<ImageIcon size={19} />} label="Banners" setIsNavigating={setIsNavigating} />
           <NavItem href="/admin/categories" icon={<Layers size={19} />} label="Categories" setIsNavigating={setIsNavigating} />
+          
+          <NavItem href="/admin/services" icon={<Briefcase size={19} />} label="Micro Services" setIsNavigating={setIsNavigating} />
+          
           <NavItem href="/admin/reviews" icon={<Bell size={19} />} label="Reviews" setIsNavigating={setIsNavigating} />
           <NavItem href="/admin/listings" icon={<Store size={19} />} label="Business Listings" setIsNavigating={setIsNavigating} />
           <NavItem href="/admin/users" icon={<Users size={19} />} label="User Access" setIsNavigating={setIsNavigating} />
           <NavItem href="/admin/leads" icon={<MessageSquare size={19} />} label="Inbound Leads" setIsNavigating={setIsNavigating} badge={data?.pendingCount || 0} />
+          
           <p className="px-4 text-[10px] font-bold text-slate-500 uppercase tracking-[2.5px] mb-5 mt-10">Configuration</p>
           <NavItem href="/admin/settings" icon={<Settings size={19} />} label="Global Settings" setIsNavigating={setIsNavigating} />
         </nav>
@@ -332,9 +338,9 @@ function ProfileInput({ label, value, onChange, icon, type = "text", placeholder
 
 function NavItem({ href, icon, label, setIsNavigating, badge }: any) {
   const pathname = usePathname();
-  const isActive = pathname === href;
+  const isActive = pathname === href || pathname.startsWith(`${href}/`);
   return (
-    <Link href={href} onClick={() => { if (pathname !== href) setIsNavigating(true); }}
+    <Link href={href} onClick={() => { if (!isActive) setIsNavigating(true); }}
       className={`flex items-center justify-between px-5 py-3.5 mx-2 rounded-2xl text-[13px] font-bold transition-all duration-300 group
         ${isActive ? "bg-[#0073c1] text-white shadow-[0_12px_24px_-8px_rgba(0,115,193,0.5)] translate-x-1" : "text-slate-400 hover:bg-slate-800/50 hover:text-white hover:translate-x-1"}`}>
       <div className="flex items-center gap-4">{icon}<span className="tracking-tight">{label}</span></div>
